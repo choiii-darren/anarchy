@@ -1,0 +1,68 @@
+version: '3'
+
+# Builds Dev environment, with hotloading.
+# Usage: docker-compose -f docker-dev.yml up -d
+
+# UI -> localhost:8000
+# Backend -> localhost:3000
+# db -> localhost:5432 
+
+services:
+  django:
+    image: django:dev
+    container_name: django-anarchy
+    build: 
+      context: ./django
+      dockerfile: ./Dockerfile.dev
+    volumes: 
+      - ./django:/user/src/django
+    working_dir: /user/src/
+    command: python3 django/manage.py runserver 0.0.0.0:8000 #fill
+    env_file:
+      - ./.env
+    # environment:
+      # - FLASK_APP=app.main
+      # - APP_CONFIG_FILE=/user/src/config.py
+      # - FLASK_DEBUG=1
+      # - FLASK_ENV=development
+
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+
+  web:
+    image: web:dev
+    container_name: web-anarchy
+    build: 
+      context: ./frontend
+      dockerfile: ./Dockerfile.dev
+    volumes: 
+      - ./frontend:/user/src/app
+      - /user/src/app/node_modules
+    working_dir: /user/src/app
+    command: npm run start
+    environment:
+      - REACT_APP_DOMAIN_NAME=${REACT_APP_DOMAIN_NAME}
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true 
+  
+  db:
+    container_name: db-anarchy
+    image: postgres:16.3-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+    command: -p 5432
+    ports:
+      - '5432:5432'
+    volumes: 
+      - ./db:/var/lib/postgresql/data
+  
+volumes:
+  db:
+    driver: local

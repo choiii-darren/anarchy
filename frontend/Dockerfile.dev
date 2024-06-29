@@ -1,0 +1,10 @@
+#! /usr/bin/env -S docker build . --tag=frontend syntax=docker/dockerfile:1 --network=host --file
+FROM node:20-alpine
+RUN apk add --no-cache python3 g++ make                                                             
+WORKDIR /user/src/app
+COPY package.json /user/src/app
+RUN npm install 
+COPY . /user/src/app
+# CMD ["npm", "run", "start"]
+RUN chmod a+x node_modules/.bin/react-scripts
+EXPOSE 3000

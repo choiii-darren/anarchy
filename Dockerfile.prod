@@ -1,0 +1,35 @@
+# #python env
+FROM python:3.10
+# #directory to put files in 
+# ENV WORKDIR=/user/src/django
+# #make the dir
+# RUN mkdir -p $WORKDIR
+
+# #update backend with required packages
+# COPY "./django/requirements.txt" .
+# RUN apt-get update
+# RUN apt-get -y install libpq-dev gcc
+# RUN pip3 install -r requirements.txt
+
+# #get all the required code
+# COPY "./django" $WORKDIR
+# WORKDIR /user/src/
+
+# #required scripts
+# #this might be a flask thing
+# COPY "./django/manage.py" /user/src/
+# # COPY "./django/gunicorn.sh" /user/src/
+# COPY --from=builder /frontend/build /user/src/build
+# ENTRYPOINT ["./gunicorn.sh"]
+
+# FROM node:20 AS builder
+# RUN apk add --no-cache python3 g++ make
+# WORKDIR /frontend
+# COPY ./frontend/package.json .
+# RUN npm install
+# COPY ./frontend .
+# RUN chmod a+x node_modules/.bin/react-scripts
+# RUN npm run build
+
+# # Port is supplied by heroku
+# EXPOSE $PORT

@@ -1,0 +1,15 @@
+# syntax=docker/dockerfile:1
+FROM python:3.8-slim-buster
+ENV WORKDIR=/user/src/django
+RUN mkdir -p $WORKDIR
+
+COPY requirements.txt .
+RUN apt-get update 
+RUN apt-get -y install libpq-dev gcc 
+RUN pip3 install -r requirements.txt
+COPY . $WORKDIR
+WORKDIR /user/src/
+COPY "manage.py" /user/src/django 
+# CMD ["python", "django/manage.py", "runserver", "0.0.0.0:8000"]
+EXPOSE 8000
+

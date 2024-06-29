@@ -1,0 +1,17 @@
+Step 1.
+Open Docker Desktop to start the daemon.
+
+Step 2. 
+Clone this repository into a folder of your choice
+
+Step 3.
+Clone the .env.sample into another .env file.
+
+Step 3.
+Run the run.sh script found in devops folder, this should build 2 / 3 (depending if db is impelemtned yet) containers
+
+Step 4.
+Work away! (localhost:3000)
+
+PS. Remember to venv and install the required components found in django/requirements.txt and put --save flag on any npm packages installed
+Any changes should automatically be reflected in the containers

@@ -1,0 +1,27 @@
+.ChatPage {
+    background-color: #212121 !important;
+}
+
+.navbar {
+    height: 10vh;
+}
+
+.chatBox {
+    /* display: flex; */
+    color: white;
+    height: 75vh;
+    max-height: 75vh;
+    padding-top: 3em;
+    overflow-y: auto;
+}
+
+.footer {
+    position: sticky !important;
+    /* left: 0 !important; */
+    bottom: 0 !important;
+    max-width: 100% !important;
+    background-color: #212121 !important;
+    /* /* height: 15vh; */
+    padding-top: 2em;
+    padding-bottom: 1.5em;
+}
