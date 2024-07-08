@@ -1,0 +1,26 @@
+.Message {}
+
+/* .chat-message {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+} */
+
+.userMessage {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    background-color: #656565;
+    align-self: flex-end;
+}
+
+.machineMessage {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    background-color: #4848481e;
+    align-self: flex-start;
+}

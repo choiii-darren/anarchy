@@ -16,50 +16,138 @@ import Form from 'react-bootstrap/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Chat from '../Chat/Chat';
 // import {faArrowUp} 
+let backendUrl = process.env.REACT_APP_DEV_ENV === "TRUE" ? "http://127.0.0.1:8000/" : ""
 
 const ChatPage = () => {
   let params = useParams();
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState({});
+  const [text, setText] = useState('');
   const [messages, setMessages] = useState([])
 
   useEffect(() => {
-    //fetch messages based on chat id
-
-    console.log(params.chatId)
-  }, [params.chatId]);
+    fetch(backendUrl + 'api/token_ping', { credentials: 'include' }).then(async (response) => {
+      if (response.ok) {
+        const data = await response.json()
+        // Cookies.set('csrftoken', data.token)
+      }
+    })
+  }, []);
 
   const getUserDetails = async (accessToken) => {
+    const options = {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": Cookies.get('csrftoken'),
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        'accessToken': accessToken
+      })
+    }
+    // console.log(headers)
     fetch(
-      `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`
+      backendUrl + 'api/authenticate', options
     )
       .then(async (response) => {
         if (response.ok) {
-          // console.log(response.json())
+          //send back user details?
           const data = await response.json();
           setUserDetails(data);
+          // console.log(userDetails)
         }
         else {
           navigate('/')
-          Cookies.remove('access_token');
-          // console.log(response.error)
+          Cookies.remove('oauth_token');
         }
       }
       )
   };
 
-  const sendMessage = () => {
+  // const sendMessage = () => {
 
-  }
+  // }
 
   const addMessage = () => {
-    setMessages([...messages, { timeStamp: "YY/MM/DD", body: "new message" }]);
+    const jwtToken = Cookies.get('jwt')
+    const options = {
+      headers: {
+        'authorization': "Bearer " + jwtToken,
+        "X-CSRFToken": Cookies.get('csrftoken'),
+      },
+      credentials: "include"
+    }
+
+    //if params.chatid is undefined, send post req to method to create new chat, then add message
+    if (params.chatId == undefined) {
+      options.method = 'POST'
+      options.body = JSON.stringify({
+        "message": text
+      })
+    }
+    else {
+      options.method = 'PUT'
+      options.body = JSON.stringify({
+        "message": text,
+        "chatId": params.chatId
+      })
+    }
+
+    try {
+      fetch(backendUrl + 'api/add_message', options)
+        .then(async (response) => {
+          if (response.ok) {
+            //get the string from the returned body 
+            //append to messages array
+            console.log(messages)
+            const newMessages = await response.json()
+            // setMessages([...messages, newMessages])
+            setMessages((currentMessages) => ([...currentMessages, ...newMessages]))
+            if (options.method == "POST") {
+              navigate(newMessages[0].chat)
+            }
+            console.log(messages)
+            console.log(newMessages)
+          }
+        })
+    }
+    catch (error) {
+      console.log(error)
+    }
+    setText('')
   };
 
-  useEffect(() => {
-    const accessToken = Cookies.get("access_token");
+  useEffect(() => { //get chat messages
+    const chatId = params.chatId;
+    const jwtToken = Cookies.get('jwt')
+    const options = {
+      headers: {
+        'authorization': "Bearer " + jwtToken,
+        "X-CSRFToken": Cookies.get('csrftoken'),
+      },
+      credentials: "include",
+      method: "GET",
+    }
+    try {
+      fetch(backendUrl + 'api/chat_messages/' + String(chatId), options)
+        .then(async (response) => {
+          if (response.ok) {
+            const data = await response.json()
+            setMessages(data)
+          }
+        })
+    }
+    catch (error) {
 
-    if (!accessToken) {
+    }
+  }, [params.chatId])
+
+  useEffect(() => {
+    const accessToken = Cookies.get("oauth_token");
+    const jwtToken = Cookies.get('jwt')
+    // fetch('http://localhost:8000/api/token_ping')
+
+    if (!accessToken && !jwtToken) {
       navigate("/");
     }
 
@@ -102,8 +190,8 @@ const ChatPage = () => {
       <Container className={styles.chatBox}>
         <Row>
           <Col></Col>
-          <Col xs={8}>{params.chatId == undefined ? <p style={{ color: "white" }}>boo</p> :
-            <Chat mesages={messages} />}</Col>
+          <Col xs={8}>{params.chatId == undefined ? <h2 style={{ textAlign: 'center' }}>Type in the box to make a new chat!</h2> :
+            <Chat messages={messages} />}</Col>
           <Col></Col>
         </Row>
 
@@ -117,7 +205,7 @@ const ChatPage = () => {
               <Form>
                 <Form.Group>
                   {/* <Form.Label>Message the Bot</Form.Label> */}
-                  <Form.Control type="text" placeholder="Message the Bot" />
+                  <Form.Control onChange={(e) => setText(e.target.value)} value={text} type="text" placeholder="Message the Bot" />
                   <Form.Text style={{ color: "#B4B4B4" }}>
                     Enjoy random letters!
                   </Form.Text>
@@ -125,7 +213,7 @@ const ChatPage = () => {
               </Form>
             </Col>
             <Col xs={1}>
-              <Button><FontAwesomeIcon icon="fa-solid fa-arrow-up" inverse /> </Button>
+              <Button onClick={addMessage}><FontAwesomeIcon icon="fa-solid fa-arrow-up" inverse /> </Button>
             </Col>
             <Col>
             </Col>
@@ -138,6 +226,6 @@ const ChatPage = () => {
 
 ChatPage.propTypes = {};
 
-ChatPage.defaultProps = {};
+// ChatPage.defaultProps = {};
 
 export default ChatPage;

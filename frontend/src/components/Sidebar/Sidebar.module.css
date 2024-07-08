@@ -13,4 +13,17 @@
 
 .listItem {
     background-color: #161616 !important;
+    color: white !important;
+    border: 0 !important;
+    margin-top: 0.5em;
+}
+
+.newChat {
+    background-color: #161616 !important;
+    color: white !important;
+    border: 0;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    align-self: center !important;
+    cursor: pointer;
 }

@@ -30,9 +30,11 @@ do
     sleep 0.5
 done
 
+
 # echo Creating Tables
-# docker exec django-anarchy python3 django/scripts/createTables.py
+docker exec django-anarchy python3 django/manage.py makemigrations
+docker exec django-anarchy python3 django/manage.py migrate
 
 # echo Adding prod data 
-# docker exec django-anarchy python3 -m django.scripts.add_prod_data
+docker exec django-anarchy python3 django/manage.py loaddata bot.json
 

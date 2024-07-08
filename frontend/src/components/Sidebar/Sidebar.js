@@ -8,6 +8,9 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Cookies from "js-cookie";
+
+let backendUrl = process.env.REACT_APP_DEV_ENV === "TRUE" ? "http://127.0.0.1:8000/" : ""
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -18,15 +21,38 @@ const Sidebar = () => {
 
   useEffect(() => {
     //fetch user chats, should i make separate tab for shared chats??? i guess that works right
-    let response = [{
-      'title': 'one', 'id': "1"
-    }, { 'title': 'two', 'id': "2" }, { 'title': 'three', 'id': "3" }]
-    setChats(response);
+    let options = {
+      method: 'GET',
+      // headers: {
+      //   "Authorization": "Bearer " + jwtToken
+      // },
+      credentials: 'include'
+    }
+    try {
+      fetch(backendUrl + 'api/user_chats', options)
+        .then(async (response) => {
+          if (response.ok) {
+            // console.log(response)
+            const data = await response.json()
+            setChats(data)
+            // console.log(data)
+          }
+        })
+    }
+    catch (error) {
+
+    }
+    // setChats(response);
     // console.log(chats);
   }, []);
 
   function navigateChat(chatId) {
     navigate(`/chats/${chatId}`)
+    handleClose()
+  }
+
+  function newChat() {
+    navigate(`/chats`)
     handleClose()
   }
 
@@ -42,13 +68,16 @@ const Sidebar = () => {
         </Offcanvas.Header>
         <Offcanvas.Body>
           <ListGroup>
+            <ListGroup.Item className={styles.newChat} onClick={() => newChat()}>
+              Make a new Chat
+            </ListGroup.Item>
             {/* <ListGroup.Item>item 1</ListGroup.Item>
 
             <ListGroup.Item>item 1</ListGroup.Item>
 
             <ListGroup.Item>item 1</ListGroup.Item> */}
             {chats.map((chat) => {
-              return <ListGroup.Item className={styles.listItem} key={chat.id} action onClick={() => navigateChat(chat.id)}>{chat.title}</ListGroup.Item>
+              return <ListGroup.Item className={styles.listItem} key={chat.id} action onClick={() => navigateChat(chat.id)}>{chat.id}</ListGroup.Item>
             })}
           </ListGroup>
         </Offcanvas.Body>
@@ -59,6 +88,6 @@ const Sidebar = () => {
 
 Sidebar.propTypes = {};
 
-Sidebar.defaultProps = {};
+// Sidebar.defaultProps = {};
 
 export default Sidebar;

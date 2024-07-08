@@ -1,0 +1,11 @@
+[
+    {
+        "model": "chats.User",
+        "pk": 1,
+        "fields": {
+            "name": "Anarchy",
+            "family_name": "Backend Machine",
+            "email": "darrenkychoi@gmail.com"
+        }
+    }
+]

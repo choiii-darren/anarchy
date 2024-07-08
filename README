@@ -15,3 +15,6 @@ Work away! (localhost:3000)
 
 PS. Remember to venv and install the required components found in django/requirements.txt and put --save flag on any npm packages installed
 Any changes should automatically be reflected in the containers
+
+
+https://coolors.co/212121-212121-333233-161616-535454

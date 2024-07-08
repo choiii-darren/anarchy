@@ -20,7 +20,8 @@ services:
     command: python3 django/manage.py runserver 0.0.0.0:8000 #fill
     env_file:
       - ./.env
-    # environment:
+    environment:
+      - DB_HOST=db
       # - FLASK_APP=app.main
       # - APP_CONFIG_FILE=/user/src/config.py
       # - FLASK_DEBUG=1

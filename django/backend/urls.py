@@ -16,12 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from oauth2_provider import urls as oauth2_urls
 
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hello', views.index, name='index'), #at app/hello
-    path('response', views.generateString, name='generate-string'),
-    path('token_ping',views.token_ping, name="token_ping")
+    # path('hello', views.index, name='index'), #at app/hello
+    # path("o/", include(oauth2_urls)),
+    path('api/response', views.generateString, name='generate-string'),
+    path('api/token_ping',views.token_ping, name="token_ping"),
+    path('api/add_message',views.addMessage, name='addMessage'),
+    path('api/authenticate', views.authenticate,name='authenticate'),
+    path('api/user_chats',views.getUserChats,name='getUserChats'),
+    path('api/chat_messages/<uuid:chatId>', views.getChatMessages,name='getChatMessages'),
+    path('api/share_chat', views.shareChat, name='shareChat')
 ]

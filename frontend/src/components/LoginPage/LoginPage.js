@@ -23,9 +23,10 @@ const LoginPage = (props) => {
     const accessTokenRegex = /access_token=([^&]+)/;
     const isMatch = window.location.href.match(accessTokenRegex);
 
+
     if (isMatch) {
       const accessToken = isMatch[1];
-      Cookies.set("access_token", accessToken);
+      Cookies.set("oauth_token", accessToken);
       setIsLoggedin(true);
     }
   }, []);
